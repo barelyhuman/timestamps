@@ -6,16 +6,17 @@
   "exports": {
     ".": {
       "import": "./src/index.mjs",
-      "require": "./src/index.js",
-      "default": "./src/index.js"
+      "require": "./cjs/index.js",
+      "default": "./cjs/index.js"
     }
   },
   "main": "./src/index.js",
   "files": [
-    "src"
+    "src",
+    "cjs"
   ],
   "scripts": {
-    "cjs": "npx esbuild src/index.mjs --outfile=src/index.js --format=cjs",
+    "cjs": "npx esbuild src/index.mjs --outfile=cjs/index.js --format=cjs",
     "fix": "yarn prettier --write .",
     "next": "bumpp",
     "prepare": "husky install",

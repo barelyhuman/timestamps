@@ -4,6 +4,8 @@ const padTimeLeft = s => String.prototype.padStart.apply(String(s), [2, '0'])
 
 /**
  * @param {number} seconds
+ * @example
+ * fromSeconds(3600) // {hours:1, minutes:0, seconds:0}
  */
 export function fromSeconds(seconds) {
   const hours = seconds / 3600
@@ -17,6 +19,8 @@ export function fromSeconds(seconds) {
 
 /**
  * @param {number} mills
+ * @example
+ * fromMilliseconds(3600 * 1000) // {hours:1, minutes:0, seconds:0}
  */
 export function fromMilliseconds(mills) {
   const inSeconds = mills / 1000
@@ -25,9 +29,18 @@ export function fromMilliseconds(mills) {
 
 /**
  * @param {number} inSeconds
- * @param {string} pattern
+ * @param {string} pattern pattern to format into,
+ * the following are the replacements
+ * {hh} => long hours
+ * {mm} => long minutes
+ * {ss} => long seconds
+ * {h} => short hours
+ * {m} => short minutes
+ * {s} => short seconds
+ * @example
+ * formatSeconds(3600, '{hh}:{mm}:{ss}') // 01:00:00
  */
-function formatSeconds(inSeconds, pattern) {
+export function formatSeconds(inSeconds, pattern) {
   const { hours, minutes, seconds } = fromSeconds(inSeconds)
   return (pattern || '{hh}h {mm}m {ss}s')
     .replace('{h}', hours)
@@ -40,7 +53,17 @@ function formatSeconds(inSeconds, pattern) {
 
 /**
  * @param {number} mills
- * @param {string} pattern
+ * @param {string} pattern pattern to format into,
+ * the following are the replacements
+ * {hh} => long hours
+ * {mm} => long minutes
+ * {ss} => long seconds
+ * {h} => short hours
+ * {m} => short minutes
+ * {s} => short seconds
+ *
+ * @example
+ * formatMilliseconds(3600 * 1000, '{hh}:{mm}:{ss}') // 01:00:00
  */
 export function formatMilliseconds(mills, pattern) {
   const inSeconds = mills / 1000
@@ -49,7 +72,17 @@ export function formatMilliseconds(mills, pattern) {
 
 /**
  * @param {number} mills
- * @param {string} pattern
+ * @param {string} pattern pattern to parse based on
+ * * the following are the replacements
+ * {hh} => long hours
+ * {mm} => long minutes
+ * {ss} => long seconds
+ * {h} => short hours
+ * {m} => short minutes
+ * {s} => short seconds
+ *
+ * @example
+ * parse('01:00:00', '{hh}:{mm}:{ss}') // {hours:1, minutes:0, seconds:0}
  */
 export function parse(timestamp, pattern = '{hh}h {mm}m {ss}s') {
   const output = {
@@ -97,20 +130,23 @@ export function parse(timestamp, pattern = '{hh}h {mm}m {ss}s') {
 
   const santizedPtrSeq = patternSequence.filter(x => x)
 
-  timestamp
-    .match(new RegExp(regex))
-    .slice(1)
-    .forEach((match, index) => {
-      if (santizedPtrSeq[index].startsWith('hours')) {
-        output.hours = norm(Number(match))
-      }
-      if (santizedPtrSeq[index].startsWith('mins')) {
-        output.minutes = norm(Number(match))
-      }
-      if (santizedPtrSeq[index].startsWith('seconds')) {
-        output.seconds = norm(Number(match))
-      }
-    })
+  const matchedValues = timestamp.match(new RegExp(regex))
+
+  if (!matchedValues) {
+    return output
+  }
+
+  matchedValues.slice(1).forEach((match, index) => {
+    if (santizedPtrSeq[index].startsWith('hours')) {
+      output.hours = norm(Number(match))
+    }
+    if (santizedPtrSeq[index].startsWith('mins')) {
+      output.minutes = norm(Number(match))
+    }
+    if (santizedPtrSeq[index].startsWith('seconds')) {
+      output.seconds = norm(Number(match))
+    }
+  })
 
   return output
 }

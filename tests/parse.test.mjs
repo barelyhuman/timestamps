@@ -31,4 +31,11 @@ test('parse {s}s|{ss}s', () => {
   assert.equal(seconds, 2)
 })
 
+test('parse {hh}:{mm}:{ss}', () => {
+  const { hours, minutes, seconds } = parse('01:02:03', '{hh}:{mm}:{ss}')
+  assert.equal(hours, 1)
+  assert.equal(minutes, 2)
+  assert.equal(seconds, 3)
+})
+
 test.run()

@@ -33,4 +33,4 @@ parse('01:00:00', '{hh}:{mm}:{ss}') // {hours:1, minutes:0, seconds:0}
 
 ## License
 
-[/LICENSE]
+[LICENSE](/LICENSE)
